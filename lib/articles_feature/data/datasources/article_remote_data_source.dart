@@ -14,7 +14,7 @@ class ArticleRemoteDataSourceImpl implements ArticleRemoteDataSource {
   Future<List<ArticleModel>> fetchArticles() async {
     final response = await dio.get(ApiEndpoints.articles);
     if (response.statusCode == 200) {
-      final articleList = response.data;
+      List articleList = response.data;
       return articleList.map((article) => ArticleModel.fromJson(article)).toList();
     } else {
       return [];

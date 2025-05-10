@@ -1,7 +1,7 @@
-import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/usecases/get_articles_usecase.dart';
+import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/usecases/get_all_articles_usecase.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/presentation/screens/articles_screen.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/presentation/viewmodels/articles_view_model.dart';
-import 'package:articles_app_bharatnxt_assignment/core/injection.dart';
+import 'package:articles_app_bharatnxt_assignment/core/dependency_injection/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,12 +17,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Articles App',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: ChangeNotifierProvider(
-        create: (context) => ArticlesViewModel(getIt<GetArticlesUsecase>()), 
-        child: ArticlesScreen(),
-      ),
+      home: ArticlesScreen(),
     );
   }
 }
