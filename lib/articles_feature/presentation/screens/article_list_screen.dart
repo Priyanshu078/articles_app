@@ -45,7 +45,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> with SingleTicker
             Consumer<ArticlesViewModel>(
               builder: (context, viewModel, _) {
                 return ArticleListWidget(
-                  articleList: viewModel.allArticles,
+                  articleList: viewModel.isSearchingAll ? viewModel.searchedAllArticles : viewModel.allArticles,
                   refreshArticleList: () => viewModel.getAllArticles(shouldNotify: true),
                   uiState: viewModel.uiState,
                 );
@@ -54,7 +54,7 @@ class _ArticleListScreenState extends State<ArticleListScreen> with SingleTicker
             Consumer<ArticlesViewModel>(
               builder: (context, viewModel, _) {
                 return ArticleListWidget(
-                  articleList: viewModel.favoriteArticles,
+                  articleList: viewModel.isSearchingFavorites ? viewModel.searchedFavArticles : viewModel.favoriteArticles,
                   refreshArticleList: () => viewModel.getFavoriteArticles(shouldNotify: true),
                   uiState: viewModel.favArticlesUIState,
                   isFavoriteList: true,

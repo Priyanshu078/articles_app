@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/entities/article_entity.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/presentation/screens/article_detail_screen.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/presentation/viewmodels/articles_view_model.dart';
@@ -27,6 +29,7 @@ class ArticleListWidget extends StatefulWidget {
 
 class _ArticleListWidgetState extends State<ArticleListWidget> {
   final TextEditingController _controller = TextEditingController();
+  Timer? _debounce;
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +38,12 @@ class _ArticleListWidgetState extends State<ArticleListWidget> {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: TextField(
+          child: TextFormField(
             controller: _controller,
-            decoration: InputDecoration(hintText: "Search", border: OutlineInputBorder(borderRadius: BorderRadius.circular(8))),
+            decoration: InputDecoration(hintText: AppStrings.search, border: OutlineInputBorder(borderRadius: BorderRadius.circular(8))),
+            onChanged: (query) {
+              _searchArticles(query, widget.isFavoriteList);
+            },
           ),
         ),
         const SizedBox(height: 8),
@@ -98,9 +104,24 @@ class _ArticleListWidgetState extends State<ArticleListWidget> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => ArticleDetailScreen(article: article)));
   }
 
+  void _searchArticles(String query, bool isFavorites) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 100), () {
+      final viewModel = context.read<ArticlesViewModel>();
+      if (isFavorites) {
+        viewModel.setIsSearchingFavorites(query.trim().isNotEmpty);
+        viewModel.searchArticles(query, isFavorite: isFavorites);
+      } else {
+        context.read<ArticlesViewModel>().setIsSearchingAll(query.trim().isNotEmpty);
+        viewModel.searchArticles(query, isFavorite: isFavorites);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 }
