@@ -91,8 +91,8 @@ class _ArticleListWidgetState extends State<ArticleListWidget> {
               widget.uiState == UIState.loading
                   ? Center(child: CircularProgressIndicator())
                   : widget.uiState == UIState.error
-                  ? Center(child: Text(AppStrings.error))
-                  : Center(child: Text(AppStrings.noArticlesFound)),
+                  ? Center(child: Text(context.read<ArticlesViewModel>().errorMessage, style: Theme.of(context).textTheme.bodyLarge))
+                  : Center(child: Text(AppStrings.noArticlesFound, style: Theme.of(context).textTheme.bodyLarge)),
             ],
           ),
         ),

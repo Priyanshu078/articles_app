@@ -5,7 +5,9 @@ import 'package:articles_app_bharatnxt_assignment/articles_feature/data/models/a
 import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/entities/article_entity.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/repositories/article_repository.dart';
 import 'package:articles_app_bharatnxt_assignment/core/constants/shared_prefs_constants.dart';
+import 'package:articles_app_bharatnxt_assignment/core/errors/failure.dart';
 import 'package:articles_app_bharatnxt_assignment/core/storage/shared_preferences_helper.dart';
+import 'package:dartz/dartz.dart';
 
 class ArticleRepositoryImpl implements ArticleRepository {
   final ArticleRemoteDataSource _remoteDataSource;
@@ -14,15 +16,15 @@ class ArticleRepositoryImpl implements ArticleRepository {
   ArticleRepositoryImpl(this._remoteDataSource, this._localDataSource, this._sharedPreferencesHelper);
 
   @override
-  Future<List<ArticleEntity>> getAllArticles() async {
+  Future<Either<Failure, List<ArticleEntity>>> getAllArticles() async {
     final response = await _remoteDataSource.fetchArticles();
-    return response.map((article) => article.toEntity()).toList();
+    return response.fold((failure) => Left(failure), (articles) => Right(articles.map((article) => article.toEntity()).toList()));
   }
 
   @override
-  Future<List<ArticleEntity>> getFavoriteArticles() async {
-    final response = _localDataSource.fetchArticles();
-    return response.map((article) => article.toEntity()).toList();
+  Future<Either<Failure, List<ArticleEntity>>> getFavoriteArticles() async {
+    final response = await _localDataSource.fetchArticles();
+    return response.fold((failure) => Left(failure), (articles) => Right(articles.map((article) => article.toEntity()).toList()));
   }
 
   @override
@@ -35,12 +37,14 @@ class ArticleRepositoryImpl implements ArticleRepository {
   @override
   Future<void> deleteFavoriteArticle(ArticleEntity articleEntity) async {
     final articleModel = ArticleModel(title: articleEntity.title, body: articleEntity.body, isFavorite: articleEntity.isFavorite);
-    final favoriteArticleList = _localDataSource.fetchArticles();
-    int index = favoriteArticleList.indexWhere((article) => article.title == articleModel.title);
-    if (index != -1) {
-      favoriteArticleList.removeAt(index);
-    }
-    List<String> jsonList = favoriteArticleList.map((article) => jsonEncode(article.toJson())).toList();
-    await _sharedPreferencesHelper.setStringList(SharedPrefsConstants.favoriteArticles, jsonList);
+    final response = await _localDataSource.fetchArticles();
+    response.fold((failure) => Left(failure), (articles) async {
+      int index = articles.indexWhere((article) => article.title == articleModel.title);
+      if (index != -1) {
+        articles.removeAt(index);
+      }
+      List<String> jsonList = articles.map((article) => jsonEncode(article.toJson())).toList();
+      await _sharedPreferencesHelper.setStringList(SharedPrefsConstants.favoriteArticles, jsonList);
+    });
   }
 }

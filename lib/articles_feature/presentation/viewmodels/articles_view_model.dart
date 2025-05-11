@@ -4,6 +4,8 @@ import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/usecas
 import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/usecases/get_favorite_articles_usecase.dart';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/domain/usecases/save_favorite_article_usecase.dart';
 import 'package:articles_app_bharatnxt_assignment/core/enums/ui_state_enum.dart';
+import 'package:articles_app_bharatnxt_assignment/core/errors/failure.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 class ArticlesViewModel extends ChangeNotifier {
@@ -46,6 +48,9 @@ class ArticlesViewModel extends ChangeNotifier {
   bool _isSearchingFavorites = false;
   bool get isSearchingFavorites => _isSearchingFavorites;
 
+  String _errorMessage = "";
+  String get errorMessage => _errorMessage;
+
   void setIsSearchingAll(bool value) {
     _isSearchingAll = value;
     notifyListeners();
@@ -60,11 +65,19 @@ class ArticlesViewModel extends ChangeNotifier {
     _allArticles.clear();
     _uiState = UIState.loading;
     if (shouldNotify) notifyListeners();
-    List<ArticleEntity> response = await _getAllArticlesUsecase();
-    if (response.isNotEmpty) {
-      _allArticles.addAll(response);
-    }
-    _uiState = UIState.loaded;
+    Either<Failure, List<ArticleEntity>> response = await _getAllArticlesUsecase();
+    response.fold(
+      (left) {
+        _errorMessage = left.message;
+        _uiState = UIState.error;
+      },
+      (right) {
+        if (right.isNotEmpty) {
+          _allArticles.addAll(right);
+        }
+        _uiState = UIState.loaded;
+      },
+    );
     notifyListeners();
   }
 
@@ -72,11 +85,19 @@ class ArticlesViewModel extends ChangeNotifier {
     _favoriteArticles.clear();
     _favArticlesUIState = UIState.loading;
     if (shouldNotify) notifyListeners();
-    List<ArticleEntity> response = await _getFavoriteArticlesUsecase();
-    if (response.isNotEmpty) {
-      _favoriteArticles.addAll(response);
-    }
-    _favArticlesUIState = UIState.loaded;
+    Either<Failure, List<ArticleEntity>> response = await _getFavoriteArticlesUsecase();
+    response.fold(
+      (left) {
+        _errorMessage = left.message;
+        _uiState = UIState.error;
+      },
+      (right) {
+        if (right.isNotEmpty) {
+          _favoriteArticles.addAll(right);
+        }
+        _uiState = UIState.loaded;
+      },
+    );
     notifyListeners();
   }
 
