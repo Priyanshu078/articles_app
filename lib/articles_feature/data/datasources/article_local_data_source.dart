@@ -1,22 +1,20 @@
-import 'package:articles_app_bharatnxt_assignment/articles_feature/data/constants/api_endpoints.dart';
+import 'dart:convert';
 import 'package:articles_app_bharatnxt_assignment/articles_feature/data/models/article_model.dart';
-import 'package:dio/dio.dart';
+import 'package:articles_app_bharatnxt_assignment/core/constants/shared_prefs_constants.dart';
+import 'package:articles_app_bharatnxt_assignment/core/storage/shared_preferences_helper.dart';
 
 abstract class ArticleLocalDataSource {
-  Future<List<ArticleModel>> fetchArticles();
+  List<ArticleModel> fetchArticles();
 }
 
 class ArticleLocalDataSourceImpl implements ArticleLocalDataSource {
-  ArticleLocalDataSourceImpl();
+  ArticleLocalDataSourceImpl(this._sharedPreferencesHelper);
+
+  final SharedPreferencesHelper _sharedPreferencesHelper;
 
   @override
-  Future<List<ArticleModel>> fetchArticles() async {
-    // final response = await dio.get(ApiEndpoints.articles);
-    // if (response.statusCode == 200) {
-    //   final articleList = response.data;
-    //   return articleList.map((article) => ArticleModel.fromJson(article)).toList();
-    // } else {
-      return [];
-    // }
+  List<ArticleModel> fetchArticles() {
+    List<String> savedFavArticles = _sharedPreferencesHelper.getStringList(SharedPrefsConstants.favoriteArticles);
+    return savedFavArticles.map((article) => ArticleModel.fromJson(jsonDecode(article))).toList();
   }
 }

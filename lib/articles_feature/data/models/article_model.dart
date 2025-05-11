@@ -4,11 +4,11 @@ class ArticleModel extends ArticleEntity {
   const ArticleModel({required super.title, required super.body, required super.isFavorite});
 
   factory ArticleModel.fromJson(Map<String, dynamic> json) {
-    return ArticleModel(title: json['title'], body: json['body'], isFavorite: false);
+    return ArticleModel(title: json['title'], body: json['body'], isFavorite: json['isFavorite'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
-    return {"title": title, "body": body};
+    return {"title": title, "body": body, "isFavorite": isFavorite};
   }
 
   ArticleEntity toEntity() {
