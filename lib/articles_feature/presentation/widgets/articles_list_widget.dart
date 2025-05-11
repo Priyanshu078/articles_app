@@ -85,7 +85,7 @@ class _ArticleListWidgetState extends State<ArticleListWidget> {
         height: constraints.maxHeight,
         width: constraints.maxWidth,
         child: Center(
-          child: Column(
+          child: Column(r
             mainAxisSize: MainAxisSize.min,
             children: [
               widget.uiState == UIState.loading

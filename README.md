@@ -1,16 +1,40 @@
-# articles_app_bharatnxt_assignment
+# Flutter Article App
+A Flutter app that fetches and displays a list of articles from a public API.
 
-A new Flutter project.
+## Features
+- List of articles
+- List of favorite articles
+- Tab of (all/ favourite) articles
+- save as favorite functionality
+- remove from favorite functionality
+- Search functionality
+- Detail view
+- Responsive UI
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Setup Instructions
+1. Clone the repo:
+git clone https://github.com/Priyanshu078/articles_app.git
+cd articles_app
 
-A few resources to get you started if this is your first Flutter project:
+2. Install dependencies:
+flutter pub get
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+3. Run the app:
+flutter run
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+- Flutter SDK: [3.29.0]
+- State Management: [Provider]
+- Architecure: [Clean-Architecture]
+- HTTP Client: [dio]
+- Persistence: [shared_preferences]
+
+## State Management Explanation
+I have used Clean Architecure for architecting the app because it keeps the code modular, clean and testable
+Provider for state management because I dont wanted to increase any complexity by using Bloc or anything else for state management.
+
+## Known Issues / Limitations
+No issues
+
+## Screenshots (Optional)
